@@ -9,6 +9,13 @@ const questions = [
         type: 'input',
         name: 'text',
         message: 'Enter text for the logo, one to three characters:',
+        validate: async (input) => {
+            if (input.length <1 || input.length > 3) {
+               return 'Please enter 1-3 characters';
+            }
+      
+            return true;
+         }
     },
     {
         type: 'input',
@@ -26,56 +33,51 @@ const questions = [
         name: 'color',
         message: 'Enter a color for the shape:',
     },
-    {
-        type: 'input',
-        name: 'outputFileName',
-        message: 'Enter the output file name (without extension):',
-    },
 ]
-
 
 var svgString = ""
 var svg_file = "logo.svg"
 
+class SVGm{
+    constructor(){
+        this.textPart = ''
+        this.shapePart = ''
+    }
+    render(){
+
+        return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="300" height="200">${this.shapePart}${this.textPart}</svg>`
+    }
+    putText(text, color){
+        this.textPart = `<text x="150" y="125" font-size="60" text-anchor="middle" fill="${color}">${text}</text>`
+    }
+    putShape(shape){
+        this.shapePart = shape.render()
+    }
+}
+
 function init(){
     inquirer.prompt(questions)
     .then((responses) =>{
-       var inputText = "";
-       if (responses.text.length > 0 && responses.text.length < 4) {
-        inputText = responses.text;
-       } else {
-        console.log("Please enter 1-3 characters");
-        return;
-       }
-       console.log("Text selected: " + inputText);
+        var inputText = responses.text;
        textColor = responses["textColor"];
-       console.log("Selected text color: " + textColor);
        color = responses.color;
-       console.log("Selected shape color: " + color);
        shapeType = responses["shape"];
-       console.log("Selected shape: " + shapeType);
+       output = "logo.svg"
 
        let pShape;
-       if (shapeType === "Circle" || shapeType === "circle") {
-        pShape = new Circle ();
-        console.log("Selected circle");
+       if (shapeType === "circle") {
+        pShape = new Circle (color);
        }
-       else if (shapeType === "Square" || shapeType === "square") {
-        pShape = new Square();
-        console.log("Selected square");
+       else if (shapeType === "square") {
+        pShape = new Square(color);
        }
-       else if (shapeType === "Triangle" || shapeType === "triangle") {
-        pShape = new Triangle ();
-        console.log("Selected triangle");
+       else if (shapeType === "triangle") {
+        pShape = new Triangle (color);
        }
-       else {
-        console.log("Please select a valid shape")
-       }
-       pShape.putColor(color);
 
-       var svg = new SVG();
-       svg.setTextElement(inputText, textColor);
-       svg.setShapeElement(pShape);
+       var svg = new SVGm();
+       svg.putText(inputText, textColor);
+       svg.putShape(pShape);
        svgString = svg.render();
 
        console.log("shape:\n\n" + svgString)
@@ -87,30 +89,13 @@ function init(){
     })
 }
 
-class SVGmaker{
-    constructor(){
-        this.textPart = ''
-        this.shapePart = ''
-    }
-    render(){
-
-        return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="300" height="200">${this.shapePart}${this.textPart}</svg>`
-    }
-    setTextElement(text,color){
-        this.textPart = `<text x="150" y="125" font-size="60" text-anchor="middle" fill="${color}">${text}</text>`
-    }
-    setShapeElement(shape){
-        this.shapePart = shape.render()
-    }
-}
 
 function writeToFile(fileName, data) {
-	console.log("Writing to file")
-    fs.writeFile(fileName, data, function (err) {
+    fs.writeFile(output, data, function (err) {
         if (err) {
             return console.log(err);
         }
-        console.log("Successfully generated a logo.svg");
+        console.log("Successfully generated a logo.svg file");
     });
 }
 

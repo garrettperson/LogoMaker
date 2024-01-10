@@ -18,9 +18,12 @@
 
   To use the project simply open an integrated terminal in index.js and enter node index.js. Interact with the prompts to generate a logo.
 
+  Watch how to use the app:
+  https://drive.google.com/file/d/1lz0zvRU89gpxlhdWoKe9oUlhTw0Nf6os/view
+
   ## Credits
 
-  To complete this project I browsed GitHub and StackOverflow, as well as YouTube and I consulted with ChatGPT.
+  To complete this project I browsed GitHub, StackOverflow, and YouTube and I consulted with ChatGPT and received help from a tutor.
 
   ## License
 
